@@ -12,9 +12,9 @@ interface SlotMachineScreenProps {
 
 const ITEM_HEIGHT = 48;
 const REPEATS = 150;
-const START_REP = 3;
+const START_REP = 50;
 const LANDING_LAPS = 2;
-const PHASE1_PX = ITEM_HEIGHT * 30;
+const PHASE1_PX = ITEM_HEIGHT * 120;
 
 const SCREEN_LEFT   = "21.8%";
 const SCREEN_TOP    = "26.9%";
@@ -42,23 +42,32 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
 
     const winnerIdx = Math.floor(Math.random() * options.length);
     const startY = currentYRef.current;
-    const phase1Y = startY - PHASE1_PX;
+    const phase1Y = startY + PHASE1_PX; // positive Y = reel scrolls downward
 
     if (scope.current) {
-      await animate(scope.current, { y: phase1Y }, { duration: 2.0, ease: "linear" });
+      await animate(scope.current, { y: phase1Y }, { duration: 0.8, ease: "linear" });
     }
 
     const phase1ItemIdx = Math.round((ITEM_HEIGHT - phase1Y) / ITEM_HEIGHT);
     const currentMod = ((phase1ItemIdx % options.length) + options.length) % options.length;
-    const stepsToWinner = ((winnerIdx - currentMod + options.length) % options.length) || options.length;
-    const targetItemIdx = phase1ItemIdx + options.length * LANDING_LAPS + stepsToWinner;
+    // Going positive (downward) means we step backward through item indices
+    const stepsBack = ((currentMod - winnerIdx + options.length) % options.length) || options.length;
+    const targetItemIdx = phase1ItemIdx - options.length * LANDING_LAPS - stepsBack;
     const targetY = -(targetItemIdx * ITEM_HEIGHT) + ITEM_HEIGHT;
 
     if (scope.current) {
       await animate(scope.current, { y: targetY }, { duration: 1.4, ease: [0.0, 0.0, 0.2, 1.0] });
     }
 
-    currentYRef.current = targetY;
+    // Teleport back by whole cycles so repeated spins never run out of reel
+    const cyclePx = options.length * ITEM_HEIGHT;
+    const cycles = Math.round((targetY - initialY) / cyclePx);
+    const snapY = cycles !== 0 ? targetY - cycles * cyclePx : targetY;
+    if (cycles !== 0 && scope.current) {
+      animate(scope.current, { y: snapY }, { duration: 0 });
+    }
+    currentYRef.current = snapY;
+
     setResult(options[winnerIdx]);
     setSpinning(false);
     setHasEverSpun(true);
