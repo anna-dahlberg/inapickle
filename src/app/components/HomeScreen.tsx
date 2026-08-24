@@ -7,7 +7,12 @@ interface HomeScreenProps {
   onYourPantry: () => void;
 }
 
+let hasAnimated = false;
+
 export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeScreenProps) {
+  const animate = !hasAnimated;
+  if (!hasAnimated) hasAnimated = true;
+
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-between px-10 pt-4 pb-16"
@@ -15,9 +20,9 @@ export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeSc
     >
       <div className="flex-1 flex flex-col items-center justify-center gap-16 w-full">
         <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial={animate ? { scale: 0.8, y: -16 } : false}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 22 }}
           style={{
             fontFamily: font.family,
             fontWeight: font.weight.bold,
@@ -32,9 +37,9 @@ export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeSc
 
         <motion.div
           className="flex flex-col gap-4 w-full"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
+          initial={animate ? { scale: 0.9, y: 20 } : false}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 22, delay: 0.08 }}
         >
           <button
             onClick={onPickleOracle}
