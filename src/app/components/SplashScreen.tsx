@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { motion } from "motion/react";
+import { colors, font } from "../../styles/tokens";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -14,7 +15,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
   return (
     <div
       className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: "#096343" }}
+      style={{ backgroundColor: colors.bg }}
       onClick={onComplete}
     >
       <motion.h1
@@ -22,11 +23,11 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
         style={{
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          fontWeight: 700,
+          fontFamily: font.family,
+          fontWeight: font.weight.bold,
           fontSize: "62px",
           lineHeight: 1.1,
-          color: "#FF98DE",
+          color: colors.pink,
           textAlign: "center",
         }}
       >

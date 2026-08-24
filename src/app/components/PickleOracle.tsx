@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import oracleImg from "@/imports/ChatGPT_Image_24_aug._2026_11_08_35.png";
+import { colors, font } from "../../styles/tokens";
 
 interface PickleOracleProps {
   onBack: () => void;
@@ -8,11 +9,10 @@ interface PickleOracleProps {
 
 type OracleState = "idle" | "animating" | "revealed";
 
-// Crystal ball center as % of the image (pickle on left, ball on right)
 const BALL_X = "66%";
 const BALL_Y = "56%";
 
-function Sparkle({ x, y, size = 7, color = "#FF98DE", delay = 0 }: {
+function Sparkle({ x, y, size = 7, color = colors.pink, delay = 0 }: {
   x: string; y: string; size?: number; color?: string; delay?: number;
 }) {
   const s = size;
@@ -35,15 +35,14 @@ function Sparkle({ x, y, size = 7, color = "#FF98DE", delay = 0 }: {
   );
 }
 
-// Sparkles around ball center (66%, 58%), spread wider
 const sparkles = [
-  { x: "48%", y: "38%", size: 7, color: "#FF98DE", delay: 0 },
-  { x: "50%", y: "60%", size: 5, color: "#ADDF26", delay: 0.4 },
-  { x: "80%", y: "38%", size: 7, color: "#ADDF26", delay: 0.2 },
-  { x: "81%", y: "62%", size: 5, color: "#FF98DE", delay: 0.6 },
-  { x: "64%", y: "30%", size: 6, color: "#FF98DE", delay: 0.1 },
-  { x: "53%", y: "76%", size: 5, color: "#ADDF26", delay: 0.5 },
-  { x: "76%", y: "74%", size: 5, color: "#FF98DE", delay: 0.3 },
+  { x: "48%", y: "38%", size: 7, color: colors.pink, delay: 0 },
+  { x: "50%", y: "60%", size: 5, color: colors.lime, delay: 0.4 },
+  { x: "80%", y: "38%", size: 7, color: colors.lime, delay: 0.2 },
+  { x: "81%", y: "62%", size: 5, color: colors.pink, delay: 0.6 },
+  { x: "64%", y: "30%", size: 6, color: colors.pink, delay: 0.1 },
+  { x: "53%", y: "76%", size: 5, color: colors.lime, delay: 0.5 },
+  { x: "76%", y: "74%", size: 5, color: colors.pink, delay: 0.3 },
 ];
 
 export function PickleOracle({ onBack }: PickleOracleProps) {
@@ -60,17 +59,16 @@ export function PickleOracle({ onBack }: PickleOracleProps) {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-between pt-24 pb-14"
-      style={{ backgroundColor: "#096343" }}
+      style={{ backgroundColor: colors.bg }}
     >
-      {/* Header */}
       <div className="flex flex-col gap-3 items-start w-full px-10">
         <h1
           style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 700,
+            fontFamily: font.family,
+            fontWeight: font.weight.bold,
             fontSize: "clamp(28px, 9vw, 42px)",
             lineHeight: 1.1,
-            color: "#FF98DE",
+            color: colors.pink,
             whiteSpace: "nowrap",
           }}
         >
@@ -78,34 +76,30 @@ export function PickleOracle({ onBack }: PickleOracleProps) {
         </h1>
         <p
           style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 500,
+            fontFamily: font.family,
+            fontWeight: font.weight.medium,
             fontSize: "20px",
             lineHeight: 1.3,
-            color: "rgba(241,246,236,0.8)",
+            color: colors.textSoft,
           }}
         >
           in the pickle we trust
         </p>
       </div>
 
-      {/* Illustration */}
       <div className="relative w-full" style={{ maxWidth: "100%" }}>
         <img
           src={oracleImg}
           alt="pickle oracle"
           className="w-full"
-          style={{}}
         />
 
-        {/* Sparkles around ball when animating */}
         <AnimatePresence>
           {oracleState === "animating" && sparkles.map((s, i) => (
             <Sparkle key={i} {...s} />
           ))}
         </AnimatePresence>
 
-        {/* Answer text centered on crystal ball */}
         <AnimatePresence>
           {oracleState === "revealed" && (
             <div
@@ -114,10 +108,10 @@ export function PickleOracle({ onBack }: PickleOracleProps) {
             >
               <motion.span
                 style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 800,
+                  fontFamily: font.family,
+                  fontWeight: font.weight.extrabold,
                   fontSize: "34px",
-                  color: "#2b1260",
+                  color: colors.oracleText,
                   lineHeight: 1,
                 }}
                 initial={{ opacity: 0, scale: 0.6 }}
@@ -132,18 +126,17 @@ export function PickleOracle({ onBack }: PickleOracleProps) {
         </AnimatePresence>
       </div>
 
-      {/* Buttons */}
       <div className="flex flex-col gap-4 w-full px-10">
         {oracleState === "revealed" ? (
           <button
             onClick={triggerOracle}
             className="w-full rounded-2xl py-3 transition-opacity active:opacity-80"
             style={{
-              backgroundColor: "#FF98DE",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 600,
+              backgroundColor: colors.pink,
+              fontFamily: font.family,
+              fontWeight: font.weight.semibold,
               fontSize: "20px",
-              color: "#F1F6EC",
+              color: colors.text,
             }}
           >
             pick again
@@ -154,11 +147,11 @@ export function PickleOracle({ onBack }: PickleOracleProps) {
             disabled={oracleState === "animating"}
             className="w-full rounded-2xl py-3 transition-opacity active:opacity-80 disabled:opacity-60"
             style={{
-              backgroundColor: "#FF98DE",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 600,
+              backgroundColor: colors.pink,
+              fontFamily: font.family,
+              fontWeight: font.weight.semibold,
               fontSize: "20px",
-              color: "#F1F6EC",
+              color: colors.text,
             }}
           >
             pickle my faith
@@ -168,11 +161,11 @@ export function PickleOracle({ onBack }: PickleOracleProps) {
           onClick={onBack}
           className="w-full rounded-2xl py-3 border transition-opacity active:opacity-80"
           style={{
-            borderColor: "#F1F6EC",
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 600,
+            borderColor: colors.text,
+            fontFamily: font.family,
+            fontWeight: font.weight.semibold,
             fontSize: "20px",
-            color: "#F1F6EC",
+            color: colors.text,
           }}
         >
           back home

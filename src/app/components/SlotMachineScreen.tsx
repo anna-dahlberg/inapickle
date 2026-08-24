@@ -1,7 +1,8 @@
 import { useState, useMemo, useRef } from "react";
-import { motion, useAnimate, AnimatePresence } from "motion/react";
+import { motion, useAnimate } from "motion/react";
 import confetti from "canvas-confetti";
 import machineImg from "@/imports/ChatGPT_Image_24_aug._2026_11_06_14.png";
+import { colors, font } from "../../styles/tokens";
 
 interface SlotMachineScreenProps {
   options: string[];
@@ -10,13 +11,11 @@ interface SlotMachineScreenProps {
 }
 
 const ITEM_HEIGHT = 48;
-const REEL_HEIGHT = ITEM_HEIGHT * 3;
 const REPEATS = 150;
 const START_REP = 3;
 const LANDING_LAPS = 2;
 const PHASE1_PX = ITEM_HEIGHT * 30;
 
-// Screen position within the 1080×1080 image (as percentages)
 const SCREEN_LEFT   = "21.8%";
 const SCREEN_TOP    = "26.9%";
 const SCREEN_WIDTH  = "56.4%";
@@ -26,7 +25,6 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
   const [scope, animate] = useAnimate();
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [hasSpun, setHasSpun] = useState(false);
   const [hasEverSpun, setHasEverSpun] = useState(false);
 
   const reelItems = useMemo(() => {
@@ -41,7 +39,6 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
     if (spinning || options.length === 0) return;
     setSpinning(true);
     setResult(null);
-    setHasSpun(false);
 
     const winnerIdx = Math.floor(Math.random() * options.length);
     const startY = currentYRef.current;
@@ -64,39 +61,34 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
     currentYRef.current = targetY;
     setResult(options[winnerIdx]);
     setSpinning(false);
-    setHasSpun(true);
     setHasEverSpun(true);
 
-    const colors = ["#FF98DE", "#ADDF26", "#F1F6EC"];
-    confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0, y: 0.75 }, colors });
-    confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1, y: 0.75 }, colors });
+    confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0, y: 0.75 }, colors: [colors.pink, colors.lime, colors.text] });
+    confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1, y: 0.75 }, colors: [colors.pink, colors.lime, colors.text] });
   };
 
   return (
     <div
       className="h-screen flex flex-col pt-24 pb-14 overflow-hidden"
-      style={{ backgroundColor: "#096343" }}
+      style={{ backgroundColor: colors.bg }}
     >
-      {/* Header */}
       <h1
         className="px-10"
         style={{
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          fontWeight: 700,
+          fontFamily: font.family,
+          fontWeight: font.weight.bold,
           fontSize: "clamp(28px, 9vw, 42px)",
           lineHeight: 1.1,
-          color: "#F1F6EC",
+          color: colors.text,
           flexShrink: 0,
         }}
       >
         {title}
       </h1>
 
-      {/* Machine */}
       <div className="flex-1 flex items-center justify-center min-h-0">
         <div style={{ position: "relative", width: "100%" }}>
 
-          {/* Reel — sits behind the machine image, visible through transparent screen */}
           <div
             style={{
               position: "absolute",
@@ -105,39 +97,35 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
               width: SCREEN_WIDTH,
               height: SCREEN_HEIGHT,
               overflow: "hidden",
-              backgroundColor: "#063d28",
+              backgroundColor: colors.bgDeep,
               borderRadius: 8,
               zIndex: 1,
             }}
           >
-            {/* Top fade */}
             <div className="absolute top-0 left-0 right-0 z-10 pointer-events-none" style={{
               height: ITEM_HEIGHT,
-              background: "linear-gradient(to bottom, rgba(6,61,40,0.95), transparent)",
+              background: `linear-gradient(to bottom, ${colors.bgOverlay}, transparent)`,
             }} />
-            {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none" style={{
               height: ITEM_HEIGHT,
-              background: "linear-gradient(to top, rgba(6,61,40,0.95), transparent)",
+              background: `linear-gradient(to top, ${colors.bgOverlay}, transparent)`,
             }} />
-            {/* Center highlight */}
             <div className="absolute left-0 right-0 z-0 pointer-events-none" style={{
               top: ITEM_HEIGHT,
               height: ITEM_HEIGHT,
-              backgroundColor: "rgba(255,152,222,0.15)",
-              borderTop: "2px solid #FF98DE",
-              borderBottom: "2px solid #FF98DE",
+              backgroundColor: colors.pinkTint,
+              borderTop: `2px solid ${colors.pink}`,
+              borderBottom: `2px solid ${colors.pink}`,
             }} />
 
-            {/* Scrolling reel */}
             <motion.div ref={scope} style={{ y: initialY }}>
               {reelItems.map((item, i) => (
                 <div key={i} className="flex items-center justify-center" style={{ height: ITEM_HEIGHT, padding: "0 10px" }}>
                   <span className="text-center truncate w-full" style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontWeight: 600,
+                    fontFamily: font.family,
+                    fontWeight: font.weight.semibold,
                     fontSize: "15px",
-                    color: "#F1F6EC",
+                    color: colors.text,
                   }}>
                     {item}
                   </span>
@@ -145,7 +133,6 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
               ))}
             </motion.div>
 
-            {/* Result overlay */}
             {result && !spinning && (
               <div
                 className="absolute left-0 right-0 flex items-center justify-center pointer-events-none z-20"
@@ -153,18 +140,18 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
                   top: ITEM_HEIGHT,
                   height: ITEM_HEIGHT,
                   padding: "0 10px",
-                  backgroundColor: "rgba(6,61,40,0.96)",
-                  borderTop: "2px solid #FF98DE",
-                  borderBottom: "2px solid #FF98DE",
+                  backgroundColor: colors.bgOverlay,
+                  borderTop: `2px solid ${colors.pink}`,
+                  borderBottom: `2px solid ${colors.pink}`,
                 }}
               >
                 <span
                   className="text-center w-full truncate"
                   style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontWeight: 800,
+                    fontFamily: font.family,
+                    fontWeight: font.weight.extrabold,
                     fontSize: "19px",
-                    color: "#FF98DE",
+                    color: colors.pink,
                     lineHeight: 1.2,
                   }}
                 >
@@ -174,7 +161,6 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
             )}
           </div>
 
-          {/* Machine image on top — transparent screen reveals reel */}
           <img
             src={machineImg}
             alt="slot machine"
@@ -182,7 +168,6 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
             style={{ zIndex: 2, pointerEvents: "none" }}
           />
 
-          {/* Invisible tap target over SPIN button */}
           <button
             onClick={doSpin}
             disabled={spinning}
@@ -197,7 +182,6 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
             }}
           />
 
-          {/* Invisible tap target over handle */}
           <button
             onClick={doSpin}
             disabled={spinning}
@@ -214,31 +198,30 @@ export function SlotMachineScreen({ options, title, onBack }: SlotMachineScreenP
         </div>
       </div>
 
-      {/* Bottom buttons */}
       <div className="flex flex-col gap-4 w-full px-10" style={{ flexShrink: 0 }}>
         <button
           onClick={doSpin}
           disabled={spinning}
           className={`w-full rounded-2xl py-3 transition-opacity active:opacity-80 ${spinning ? 'opacity-40 pointer-events-none' : ''}`}
           style={{
-            backgroundColor: "#ADDF26",
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 600,
+            backgroundColor: colors.lime,
+            fontFamily: font.family,
+            fontWeight: font.weight.semibold,
             fontSize: "20px",
-            color: "#F1F6EC",
+            color: colors.text,
           }}
         >
-          spin again
+          {hasEverSpun ? "spin again" : "spin"}
         </button>
         <button
           onClick={onBack}
           className="w-full rounded-2xl py-3 border transition-opacity active:opacity-80"
           style={{
-            borderColor: "#F1F6EC",
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 600,
+            borderColor: colors.text,
+            fontFamily: font.family,
+            fontWeight: font.weight.semibold,
             fontSize: "20px",
-            color: "#F1F6EC",
+            color: colors.text,
           }}
         >
           back

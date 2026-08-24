@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, forwardRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { JarIcon } from "./JarIcon";
+import { colors, font } from "../../styles/tokens";
 
 export interface Jar {
   id: string;
@@ -22,8 +23,8 @@ interface PantryScreenProps {
 function PinIcon({ pinned }: { pinned: boolean }) {
   return (
     <svg width="22" height="22" fill="none" viewBox="0 0 22 22" style={{ opacity: pinned ? 1 : 0.4 }}>
-      <circle cx="7.5" cy="7.5" r="5.5" stroke={pinned ? "#FF98DE" : "#F1F6EC"} strokeWidth="1.5" />
-      <path d="M7.5 13v7" stroke={pinned ? "#FF98DE" : "#F1F6EC"} strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="7.5" cy="7.5" r="5.5" stroke={pinned ? colors.pink : colors.text} strokeWidth="1.5" />
+      <path d="M7.5 13v7" stroke={pinned ? colors.pink : colors.text} strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -33,7 +34,7 @@ function EditIcon() {
     <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
       <path
         d="M14.5 2.5L17.5 5.5L6.5 16.5H3.5V13.5L14.5 2.5Z"
-        stroke="#F1F6EC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.6"
+        stroke={colors.text} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.6"
       />
     </svg>
   );
@@ -44,7 +45,7 @@ function TrashIcon({ confirming }: { confirming: boolean }) {
     <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
       <path
         d="M3 5h14M8 5V3h4v2M6 5l1 11h6l1-11"
-        stroke={confirming ? "#ff6b6b" : "#F1F6EC"}
+        stroke={confirming ? colors.danger : colors.text}
         strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
         opacity={confirming ? 1 : 0.6}
       />
@@ -67,7 +68,6 @@ const JarCard = forwardRef<HTMLDivElement, {
 }, ref) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
-  // Auto-cancel confirm after 2.5 s
   useEffect(() => {
     if (!confirmingDelete) return;
     const t = setTimeout(() => setConfirmingDelete(false), 2500);
@@ -93,23 +93,25 @@ const JarCard = forwardRef<HTMLDivElement, {
       transition={{ duration: 0.2 }}
       className="relative rounded-2xl overflow-hidden"
       style={{
-        backgroundColor: jar.pinned ? "rgba(255, 157, 224, 0.1)" : "transparent",
-        border: jar.pinned ? "2px solid #FF9DE0" : "1px solid rgba(241,246,236,0.8)",
+        backgroundColor: jar.pinned ? colors.pinkWash : "transparent",
+        border: jar.pinned ? `2px solid ${colors.pink}` : `1px solid ${colors.textSoft}`,
         boxShadow: jar.pinned ? "none" : "0px 4px 4px 0px rgba(0,0,0,0.25)",
       }}
     >
       <div className="flex items-center justify-between px-4 py-3">
-        {/* Left: tap to pick */}
         <button
           className="flex items-center gap-3 flex-1 text-left active:opacity-70 transition-opacity"
           onClick={() => onPickFromJar(jar)}
         >
-          <JarIcon color={jar.pinned ? "#FF98DE" : "#F1F6EC"} size={36} />
+          <JarIcon color={jar.pinned ? colors.pink : colors.text} size={36} />
           <div className="flex flex-col gap-1">
             <span
               style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontWeight: 700, fontSize: "16px", lineHeight: 1.4, color: "#F1F6EC",
+                fontFamily: font.family,
+                fontWeight: font.weight.bold,
+                fontSize: "16px",
+                lineHeight: 1.4,
+                color: colors.text,
               }}
             >
               {jar.name}
@@ -117,7 +119,6 @@ const JarCard = forwardRef<HTMLDivElement, {
           </div>
         </button>
 
-        {/* Right: actions */}
         <div className="flex items-center gap-3">
           <button onClick={() => onEditJar(jar)} className="transition-opacity active:opacity-70">
             <EditIcon />
@@ -136,7 +137,6 @@ const JarCard = forwardRef<HTMLDivElement, {
         </div>
       </div>
 
-      {/* Confirm hint strip */}
       <AnimatePresence>
         {confirmingDelete && (
           <motion.div
@@ -145,13 +145,14 @@ const JarCard = forwardRef<HTMLDivElement, {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.18 }}
             className="overflow-hidden flex items-center justify-center"
-            style={{ backgroundColor: "rgba(255,107,107,0.15)" }}
+            style={{ backgroundColor: colors.dangerTint }}
           >
             <span
               style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontWeight: 500, fontSize: "12px",
-                color: "#ff6b6b",
+                fontFamily: font.family,
+                fontWeight: font.weight.medium,
+                fontSize: "12px",
+                color: colors.danger,
               }}
             >
               tap trash again to delete
@@ -194,19 +195,21 @@ export function PantryScreen({
   return (
     <div
       className="h-screen flex flex-col px-10 pt-24 pb-14 overflow-hidden"
-      style={{ backgroundColor: "#096343" }}
+      style={{ backgroundColor: colors.bg }}
     >
       <h1
         style={{
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          fontWeight: 700, fontSize: "clamp(28px, 9vw, 42px)", lineHeight: 1.1, color: "#F1F6EC",
+          fontFamily: font.family,
+          fontWeight: font.weight.bold,
+          fontSize: "clamp(28px, 9vw, 42px)",
+          lineHeight: 1.1,
+          color: colors.text,
           flexShrink: 0,
         }}
       >
         your pantry
       </h1>
 
-      {/* Scrollable jar list */}
       <div className="relative flex-1 min-h-0 mt-8">
         <div
           ref={scrollRef}
@@ -222,9 +225,12 @@ export function PantryScreen({
                   animate={{ opacity: 0.5 }}
                   exit={{ opacity: 0 }}
                   style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontWeight: 400, fontSize: "16px", color: "#F1F6EC",
-                    textAlign: "center", paddingTop: "32px",
+                    fontFamily: font.family,
+                    fontWeight: font.weight.regular,
+                    fontSize: "16px",
+                    color: colors.text,
+                    textAlign: "center",
+                    paddingTop: "32px",
                   }}
                 >
                   no jars yet — save some options from the picker!
@@ -244,17 +250,16 @@ export function PantryScreen({
           </div>
         </div>
 
-        {/* Scroll fade + chevron hint */}
         {canScrollMore && (
           <div
             className="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end pointer-events-none"
             style={{
               height: 64,
-              background: "linear-gradient(to bottom, transparent, #096343)",
+              background: `linear-gradient(to bottom, transparent, ${colors.bg})`,
             }}
           >
             <svg width="20" height="12" viewBox="0 0 20 12" fill="none" style={{ marginBottom: 4, opacity: 0.7 }}>
-              <path d="M2 2l8 8 8-8" stroke="#F1F6EC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M2 2l8 8 8-8" stroke={colors.text} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         )}
@@ -265,13 +270,15 @@ export function PantryScreen({
           onClick={onNewJar}
           className="w-full rounded-2xl py-3 flex items-center justify-center gap-2 transition-opacity active:opacity-80"
           style={{
-            backgroundColor: "#FF98DE",
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 600, fontSize: "20px", color: "#F1F6EC",
+            backgroundColor: colors.pink,
+            fontFamily: font.family,
+            fontWeight: font.weight.semibold,
+            fontSize: "20px",
+            color: colors.text,
           }}
         >
           <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-            <path d="M10 3v14M3 10h14" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <path d="M10 3v14M3 10h14" stroke={colors.text} strokeWidth="2" strokeLinecap="round" />
           </svg>
           new jar
         </button>
@@ -279,9 +286,11 @@ export function PantryScreen({
           onClick={onBack}
           className="w-full rounded-2xl py-3 border transition-opacity active:opacity-80"
           style={{
-            borderColor: "#F1F6EC",
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 600, fontSize: "20px", color: "#F1F6EC",
+            borderColor: colors.text,
+            fontFamily: font.family,
+            fontWeight: font.weight.semibold,
+            fontSize: "20px",
+            color: colors.text,
           }}
         >
           back home

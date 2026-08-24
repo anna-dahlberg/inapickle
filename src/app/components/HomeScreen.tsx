@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { colors, font } from "../../styles/tokens";
 
 interface HomeScreenProps {
   onPickleOracle: () => void;
@@ -10,7 +11,7 @@ export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeSc
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-between px-10 pt-4 pb-16"
-      style={{ backgroundColor: "#096343" }}
+      style={{ backgroundColor: colors.bg }}
     >
       <div className="flex-1 flex flex-col items-center justify-center gap-16 w-full">
         <motion.h1
@@ -18,11 +19,11 @@ export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeSc
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 700,
+            fontFamily: font.family,
+            fontWeight: font.weight.bold,
             fontSize: "clamp(36px, 14vw, 64px)",
             lineHeight: 1.1,
-            color: "#FF98DE",
+            color: colors.pink,
             textAlign: "center",
           }}
         >
@@ -39,11 +40,11 @@ export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeSc
             onClick={onPickleOracle}
             className="w-full rounded-2xl py-3 transition-opacity active:opacity-80"
             style={{
-              backgroundColor: "#FF98DE",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 600,
+              backgroundColor: colors.pink,
+              fontFamily: font.family,
+              fontWeight: font.weight.semibold,
               fontSize: "20px",
-              color: "#F1F6EC",
+              color: colors.text,
             }}
           >
             the pickle oracle
@@ -52,11 +53,11 @@ export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeSc
             onClick={onThePicker}
             className="w-full rounded-2xl py-3 transition-opacity active:opacity-80"
             style={{
-              backgroundColor: "#ADDF26",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 600,
+              backgroundColor: colors.lime,
+              fontFamily: font.family,
+              fontWeight: font.weight.semibold,
               fontSize: "20px",
-              color: "#F1F6EC",
+              color: colors.text,
             }}
           >
             the picker
@@ -65,11 +66,11 @@ export function HomeScreen({ onPickleOracle, onThePicker, onYourPantry }: HomeSc
             onClick={onYourPantry}
             className="w-full rounded-2xl py-3 border transition-opacity active:opacity-80"
             style={{
-              borderColor: "#F1F6EC",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 600,
+              borderColor: colors.text,
+              fontFamily: font.family,
+              fontWeight: font.weight.semibold,
               fontSize: "20px",
-              color: "#F1F6EC",
+              color: colors.text,
             }}
           >
             your pantry

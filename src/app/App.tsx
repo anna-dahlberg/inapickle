@@ -6,6 +6,7 @@ import { PickerScreen } from "./components/PickerScreen";
 import { PantryScreen } from "./components/PantryScreen";
 import type { Jar } from "./components/PantryScreen";
 import { SlotMachineScreen } from "./components/SlotMachineScreen";
+import { colors } from "../styles/tokens";
 
 type Screen =
   | "splash"
@@ -52,7 +53,6 @@ export default function App() {
     returnTo: "picker",
   });
 
-  // Navigation helpers
   const goHome = useCallback(() => setScreen("home"), []);
 
   const handlePickAPickle = useCallback(
@@ -185,7 +185,7 @@ export default function App() {
   return (
     <div
       className="min-h-screen flex justify-center"
-      style={{ backgroundColor: "#096343" }}
+      style={{ backgroundColor: colors.bg }}
     >
       <div className="w-full max-w-[440px] min-h-screen relative">
         {renderScreen()}
